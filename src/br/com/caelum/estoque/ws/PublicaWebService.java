@@ -9,9 +9,8 @@ public class PublicaWebService {
         EstoqueWS implementacaoWS = new EstoqueWS();
         String URL = "http://localhost:8080/estoquews";
 
-        System.out.println("EstoqueWS rodando: " + URL);
+        System.out.println("EstoqueWS rodando: " + URL + "?wsdl");
 
-        //associando URL com implementacao
         Endpoint.publish(URL, implementacaoWS);
     }
 

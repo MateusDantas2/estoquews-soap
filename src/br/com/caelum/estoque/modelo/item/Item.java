@@ -105,7 +105,5 @@ public class Item {
 		public Item build() {
 			return new Item(this.codigo,this.nome,this.tipo,this.quantidade);
 		}
-		
 	}
-	
 }
