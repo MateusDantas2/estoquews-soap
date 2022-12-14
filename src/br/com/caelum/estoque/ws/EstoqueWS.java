@@ -11,14 +11,18 @@ import br.com.caelum.estoque.modelo.item.Filtro;
 import br.com.caelum.estoque.modelo.item.Filtros;
 import br.com.caelum.estoque.modelo.item.Item;
 import br.com.caelum.estoque.modelo.item.ItemDao;
+import br.com.caelum.estoque.modelo.item.ItemValidador;
 import br.com.caelum.estoque.modelo.item.ListaItens;
+import br.com.caelum.estoque.modelo.usuario.AutorizacaoException;
+import br.com.caelum.estoque.modelo.usuario.TokenDao;
+import br.com.caelum.estoque.modelo.usuario.TokenUsuario;
 
 @WebService
 public class EstoqueWS {
 
     private ItemDao dao = new ItemDao();
     
-    @WebMethod(operationName = "todosOsItens")
+    @WebMethod(operationName = "TodosOsItens")
     @WebResult(name = "itens")
     public ListaItens getItens(@WebParam(name = "filtros")Filtros filtros) {
         System.out.println("Chamando getItens()");
@@ -29,8 +33,21 @@ public class EstoqueWS {
     
     @WebMethod(operationName = "CadastrarItem")
     @WebResult(name = "item")
-    public Item cadastrarItem(@WebParam(name = "item") Item item) {
-    	System.out.println("Cadastrando " + item);
+    public Item cadastrarItem(
+    		@WebParam(name = "tokenUsuario",header = true) TokenUsuario token, 
+    		@WebParam(name = "item") Item item) 
+    				throws AutorizacaoException {
+    	
+    	System.out.println("Cadastrando item " + item + ", Token: " + token);
+    	
+    	boolean valido = new TokenDao().ehValido(token);
+    	
+    	if (!valido) {
+    		throw new AutorizacaoException("Autorizacao Falhou!");
+    	}
+    	
+    	new ItemValidador(item).validate();
+    	
     	this.dao.cadastrar(item);
     	return item;
     }
